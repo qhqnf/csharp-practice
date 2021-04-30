@@ -10,7 +10,10 @@ fn build_full_name(person: &Person) -> String {
     full_name.push_str(" ");
 
     match &person.middle{
-        Some(middle_name) => full_name.push_str(middle_name),
+        Some(middle_name) => {
+            full_name.push_str(middle_name);
+            full_name.push_str(" ");
+        },
         None => {},
     }
 
