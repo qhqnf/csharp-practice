@@ -1,45 +1,33 @@
-struct Person {
-    first: String,
-    middle: Option<String>,
-    last: String,
-}
+use std::fs::File;
+use std::io::{Error as IoError, Read};
+use std::path::PathBuf;
 
-fn build_full_name(person: &Person) -> String {
-    let mut full_name = String::new();
-    full_name.push_str(&person.first);
-    full_name.push_str(" ");
+fn read_file_contents(path: PathBuf) -> Result<String, IoError> {
+    let mut string = String::new();
 
-    match &person.middle{
-        Some(middle_name) => {
-            full_name.push_str(middle_name);
-            full_name.push_str(" ");
-        },
-        None => {},
-    }
+    // TODO #1: Handle this match expression.
+    // --------------------------------------
+    // Pass the variable to the `file` variable on success, or
+    // Return from the function early if it is an error.
+    let mut file: File = match File::open(path) {
+        Ok(file_handle) => file_handle,
+        Err(io_error) => return Err(io_error)
+    };
 
-    full_name.push_str(&person.last);
-    full_name
+    // TODO #2: Handle this error.
+    // ---------------------------
+    // The success path is already filled in for you.
+    // Return from the function early if it is an error.
+    match file.read_to_string(&mut string) {
+        Ok(_) => (),
+        Err(io_error) => return Err(io_error)
+    };
+
+    // TODO #3: Return the `string` variable as expected by this function signature.
+    Ok(string)
 }
 
 fn main() {
-    let john = Person {
-        first: String::from("James"),
-        middle: Some(String::from("Oliver")),
-        last: String::from("Smith"),
-    };
-    assert_eq!(build_full_name(&john), "James Oliver Smith");
-
-    let alice = Person {
-        first: String::from("Alice"),
-        middle: None,
-        last: String::from("Stevens"),
-    };
-    assert_eq!(build_full_name(&alice), "Alice Stevens");
-
-    let bob = Person {
-        first: String::from("Robert"),
-        middle: Some(String::from("Murdock")),
-        last: String::from("Jones"),
-    };
-    assert_eq!(build_full_name(&bob), "Robert Murdock Jones");
+    assert!(read_file_contents(PathBuf::from("src/main.rs")).is_ok());
+    assert!(read_file_contents(PathBuf::from("non-existent-file.txt")).is_err());
 }
